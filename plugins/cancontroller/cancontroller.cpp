@@ -94,6 +94,7 @@ void CanController::devFramesReceived( void )
     QMap<QString, QCanBusDevice* >::iterator i;
     QCanBusDevice* canDev;
     QCanBusFrame frame;
+    QVariantMap mapFrame;
     QList< QCanBusFrame >::iterator cacheIterator;
     bool idMatch = false;
 
@@ -125,7 +126,17 @@ void CanController::devFramesReceived( void )
                         {
                             //update frame
                             *cacheIterator = frame;
-                            emit rxMessageDataChanged( i.key(), frame );
+
+                            mapFrame.insert( "frameId", frame.frameId() );
+                            mapFrame.insert( "frameType", frame.frameType() );
+                            mapFrame.insert( "payload", frame.payload() );
+
+                            //cannot map QFlags<FrameError> type
+                            // TODO: find another way
+                            //mapFrame.insert( "error", frame.error() );
+
+
+                            emit rxMessageDataChanged( i.key(), mapFrame );
                         }
                     }
                 }
@@ -135,7 +146,16 @@ void CanController::devFramesReceived( void )
                 {
                     m_messageCache[i.key()].append( frame );
 
-                    emit rxMessageDataChanged( i.key(), frame );
+                    mapFrame.insert( "frameId", frame.frameId() );
+                    mapFrame.insert( "frameType", frame.frameType() );
+                    mapFrame.insert( "payload", frame.payload() );
+
+                    //cannot map QFlags<FrameError> type
+                    // TODO: find another way
+                    //mapFrame.insert( "error", frame.error() );
+
+
+                    emit rxMessageDataChanged( i.key(), mapFrame );
 
                 }
 
@@ -149,6 +169,7 @@ void CanController::devFramesReceived( void )
 void CanController::devFramesWritten( qint64 framesWritten )
 {
     Q_UNUSED( framesWritten )
+
 }
 
 

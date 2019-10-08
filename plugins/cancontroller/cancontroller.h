@@ -79,10 +79,15 @@ signals:
      * \brief rxMessageDataChanged
      *  message payload related to given id changed from the last
      *  received
-     * \param devName
-     * \param frame
+     * \param devName CAN bus interface name source (i.e. can0, vcan0, etc.)
+     * \param frame QVariantMap with following fields:
+     *          QVariantMap["frameId"] : CAN message frame ID (32 bit integer value)
+     *          QVariantMap["frameType"]: CAN message frame enum type (enum QCanBusFrame::FrameType)
+     *          QVariantMap["payload"]: CAN payload byte array (QByteArray)
+     *                 TODO: QVariantMap["error"] NOT YET IMPLEMENTED
+     *
      */
-    void rxMessageDataChanged( QString devName, QCanBusFrame frame );
+    void rxMessageDataChanged( QString devName, QVariantMap frame );
 
 
     /*!
