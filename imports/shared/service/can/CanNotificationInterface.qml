@@ -46,6 +46,9 @@ import QtApplicationManager 1.0
 */
 
 Notification {
+
+
+
     id: root
     timeout: 0
     category: "can"
@@ -92,14 +95,13 @@ Notification {
     signal value
 
     */
-    property int payload: 0
+    property var payload : [ ]
 
 
     /*!
       \qmlproperty signalName
       */
     property string signalName: "unset"
-
 
 
 
@@ -110,15 +112,16 @@ Notification {
            not used because of redundant with
            message
     */
-    enum FrameType {
-        Unset,
-        Data,
-        Remote,
-        Error,
-        Max
-    }
+//    enum FrameType {
+//        Unset,
+//        Data,
+//        Remote,
+//        Error,
+//        Max
+//    }
 
-    property int frameType : CanNotificationInterface.FrameType.Unset
+
+//    property int frameType : CanNotificationInterface.FrameType.Unset
 
     onCanBusChanged: {
         updateData()
@@ -132,9 +135,9 @@ Notification {
         updateData()
     }
 
-    onFrameTypeChanged: {
-        updateDate()
-    }
+//    onFrameTypeChanged: {
+//        updateDate()
+//    }
 
     function updateData( )
     {
@@ -147,7 +150,7 @@ Notification {
 
           extended = {
             "canBus" : root.canBus,
-            "frameType" : root.frameType,
+            "frameType" : "unset", //root.frameType,
             "canid" : root.canId,
             "payload" : root.payload,
             "signalName" : root.signalName }

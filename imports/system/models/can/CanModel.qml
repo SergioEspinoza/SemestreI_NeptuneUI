@@ -80,13 +80,13 @@ QtObject {
     }
 
 
-   CanNotificationInterface  {
+   property CanNotificationInterface canInterface :  {
         //set
         id: canNotification
     }
 
 
-    CanController  {
+    property CanController controller :  {
 
         id: canController
 
@@ -99,13 +99,17 @@ QtObject {
         //               'payload' : message payload
 
         onRxMessageDataChanged: {
-            var busName = devName
-            var msgId = frame[ "msgId" ]
+            //var busName = devName
+            var msgId = frame[ "frameId" ]
+            var frameType = frame["frameType"]
             var payload = frame[ "payload" ]
 
-            canNotification.canBus = "CCAN"
+            canNotification.canBus = devName
             canNotification.canId = msgId
             canNotification.payload = payload
+
+
+            console.warn( "CAN frame id " + msgId )
 
             //send via notification manager
             canNotification.show()
@@ -113,7 +117,6 @@ QtObject {
 
             //send via signal / slot mechanism
             emit( messageDataUpdate( busName, msgId, payload ) )
-
 
         }
 
@@ -133,7 +136,7 @@ QtObject {
 
 
 
-    Connections {
+    property Connections connections : {
       target: NotificationManager
 
       // process incoming notifications for self originated signals
@@ -148,6 +151,14 @@ QtObject {
 
           }
       }
+
+    Component.onCompleted: {
+
+        canController.initCanRx( "vcan0" )
+
+        console.warn( "CanModel Component::OnCompleted() " )
+
+    }
 
 
 }
