@@ -86,54 +86,6 @@ QtObject {
         id: canNotification
     }
 
-
-//    property CanController controller :  CanController {
-
-//        id: canController
-
-        // \brief OnRxMessageDataChanged
-        //        incoming CAN  message data changes
-        //  \param devName 'string' , associated CAN bus
-        //  \param frame 'QVariantMap' type with following memebers:
-        //               'frameId' : 32 bit integer
-        //               'frameType' : string
-        //               'payload' : message payload
-
-//        onRxMessageDataChanged: {
-//            //var busName = devName
-//            var msgId = frame[ "frameId" ]
-//            var frameType = frame["frameType"]
-//            var payload = frame[ "payload" ]
-
-//            canNotification.canBus = devName
-//            canNotification.canId = msgId
-//            canNotification.payload = payload
-
-
-//            console.warn( "CAN frame id " + msgId )
-
-//            //send via notification manager
-//            canNotification.show()
-
-
-//            //send via signal / slot mechanism
-//            emit( messageDataUpdate( busName, msgId, payload ) )
-
-//        }
-
-        /*!
-        * \brief rxSignalValueChanged
-        * incoming CAN Signal  changes
-        *  \param signalName 'string' type, unique signal name
-        *  \param value 'int' type, signal value
-        */
-//        onRxSignalValueChanged: {
-//            //TODO: implement!
-
-//        }
-
-//    }
-
     property Connections canConnections : Connections {
 
         target: CanController
