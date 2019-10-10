@@ -1,15 +1,43 @@
 /****************************************************************************
-** YAZAKI COPYRIGHT
+**
+** Copyright (C) 2017 Pelagicore AG
+** Contact: https://www.qt.io/licensing/
+**
+** This file is part of the Neptune IVI UI.
+**
+** $QT_BEGIN_LICENSE:GPL-QTAS$
+** Commercial License Usage
+** Licensees holding valid commercial Qt Automotive Suite licenses may use
+** this file in accordance with the commercial license agreement provided
+** with the Software or, alternatively, in accordance with the terms
+** contained in a written agreement between you and The Qt Company.  For
+** licensing terms and conditions see https://www.qt.io/terms-conditions.
+** For further information use the contact form at https://www.qt.io/contact-us.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3 or (at your option) any later version
+** approved by the KDE Free Qt Foundation. The licenses are as published by
+** the Free Software Foundation and appearing in the file LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-3.0.html.
+**
+** $QT_END_LICENSE$
+**
+** SPDX-License-Identifier: GPL-3.0
+**
 ****************************************************************************/
 
 pragma Singleton
-import QtQuick 2.6
+import QtQuick 2.0
 import animations 1.0
 import QtApplicationManager 1.0
 
 import com.yazaki.CanController 1.0
 import service.can 1.0
 
+import utils 1.0
 
 
 
@@ -38,30 +66,77 @@ QtObject {
 
 
 
-    function setCanMsgNotificationCallback( busName, msgId, callback )
-    {
-            //TODO: implement in CanController backend
-            //canController.setCanMsgNotificationCallback
+//    function setCanMsgNotificationCallback( busName, msgId, callback )
+//    {
+//            //TODO: implement in CanController backend
+//            //canController.setCanMsgNotificationCallback
 
-    }
+//    }
 
-    function setCanSignalNotificationCallback( busName, signalName, callback )
-    {
-        //TODO: implement in CanController backend
-        //canController.setCanSignalNotificationCallback
+//    function setCanSignalNotificationCallback( busName, signalName, callback )
+//    {
+//        //TODO: implement in CanController backend
+//        //canController.setCanSignalNotificationCallback
 
-    }
+//    }
 
 
-   property CanNotificationInterface canInterface :  {
+   property CanNotificationInterface canInterface :  CanNotificationInterface{
         //set
         id: canNotification
     }
 
 
-    property CanController controller :  {
+//    property CanController controller :  CanController {
 
-        id: canController
+//        id: canController
+
+        // \brief OnRxMessageDataChanged
+        //        incoming CAN  message data changes
+        //  \param devName 'string' , associated CAN bus
+        //  \param frame 'QVariantMap' type with following memebers:
+        //               'frameId' : 32 bit integer
+        //               'frameType' : string
+        //               'payload' : message payload
+
+//        onRxMessageDataChanged: {
+//            //var busName = devName
+//            var msgId = frame[ "frameId" ]
+//            var frameType = frame["frameType"]
+//            var payload = frame[ "payload" ]
+
+//            canNotification.canBus = devName
+//            canNotification.canId = msgId
+//            canNotification.payload = payload
+
+
+//            console.warn( "CAN frame id " + msgId )
+
+//            //send via notification manager
+//            canNotification.show()
+
+
+//            //send via signal / slot mechanism
+//            emit( messageDataUpdate( busName, msgId, payload ) )
+
+//        }
+
+        /*!
+        * \brief rxSignalValueChanged
+        * incoming CAN Signal  changes
+        *  \param signalName 'string' type, unique signal name
+        *  \param value 'int' type, signal value
+        */
+//        onRxSignalValueChanged: {
+//            //TODO: implement!
+
+//        }
+
+//    }
+
+    property Connections canConnections : Connections {
+
+        target: CanController
 
         // \brief OnRxMessageDataChanged
         //        incoming CAN  message data changes
@@ -99,7 +174,7 @@ QtObject {
         *  \param signalName 'string' type, unique signal name
         *  \param value 'int' type, signal value
         */
-       onRxSignalValueChanged: {
+        onRxSignalValueChanged: {
             //TODO: implement!
 
         }
@@ -108,8 +183,7 @@ QtObject {
 
 
 
-
-    property Connections connections : {
+  property Connections notifyConnections : Connections {
       target: NotificationManager
 
       // process incoming notifications for self originated signals
@@ -127,9 +201,8 @@ QtObject {
 
     Component.onCompleted: {
 
-        canController.initCanRx( "vcan0" )
-
-        console.warn( "CanModel Component::OnCompleted() " )
+        CanController.canInit( "vcan0", 115200 )
+        CanController.initCanRx( "vcan0" )
 
     }
 
