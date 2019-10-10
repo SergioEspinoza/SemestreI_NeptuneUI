@@ -62,7 +62,7 @@ QtObject {
     signal signalValueUpdate(  string signalName, int value )
 
     // data corresponds to 64 bit value
-    signal messageDataUpdate( string bus, int msgId, int data )
+    signal messageDataUpdate( string bus, int msgId, var data )
 
 
 
@@ -102,7 +102,7 @@ QtObject {
             //var busName = devName
             var msgId = frame[ "frameId" ]
             var frameType = frame["frameType"]
-            var payload = frame[ "payload" ]
+            var payload = new Int8Array(frame[ "payload" ])
 
             canNotification.canBus = devName
             canNotification.canId = msgId
@@ -116,7 +116,8 @@ QtObject {
 
 
             //send via signal / slot mechanism
-            emit( messageDataUpdate( busName, msgId, payload ) )
+            //emit( messageDataUpdate( devName, msgId, payload ) )
+            root.messageDataUpdate( devName, msgId, payload )
 
         }
 
