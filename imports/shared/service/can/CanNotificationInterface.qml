@@ -34,8 +34,8 @@ import QtApplicationManager 1.0
         summary: "can message"
         priority: 9
 
-	canId: 0x211
-        data: 
+    canId: 0x211
+        data:
 
     }
     \endqml
@@ -70,7 +70,7 @@ Notification {
       * this is a textual message
       */
     body: "unset"
- 
+
 
     /*!
       \qmlproperty canBus
@@ -95,7 +95,7 @@ Notification {
     signal value
 
     */
-    property var payload : [ ]
+    property var payload: [0,0,0,0]
 
 
     /*!
@@ -112,16 +112,16 @@ Notification {
            not used because of redundant with
            message
     */
-//    enum FrameType {
-//        Unset,
-//        Data,
-//        Remote,
-//        Error,
-//        Max
-//    }
+    //    enum FrameType {
+    //        Unset,
+    //        Data,
+    //        Remote,
+    //        Error,
+    //        Max
+    //    }
 
 
-//    property int frameType : CanNotificationInterface.FrameType.Unset
+    //    property int frameType : CanNotificationInterface.FrameType.Unset
 
     onCanBusChanged: {
         updateData()
@@ -135,25 +135,27 @@ Notification {
         updateData()
     }
 
-//    onFrameTypeChanged: {
-//        updateDate()
-//    }
+    //    onFrameTypeChanged: {
+    //        updateDate()
+    //    }
 
     function updateData( )
     {
-          /*!
+        /*!
               extended property for CAN frame data
-              store id / payload for now. 
+              store id / payload for now.
               TODO: implement extra fields for individual signals, describe
               using startbit, size etc.
           */
 
-          extended = {
+        extended = {
             "canBus" : root.canBus,
             "frameType" : "unset", //root.frameType,
-            "canid" : root.canId,
+            "canId" : root.canId,
+            //unable to propagate "payload" as Int8Array objet
             "payload" : root.payload,
-            "signalName" : root.signalName }
+            "signalName" : root.signalName
+        }
     }
 
 }

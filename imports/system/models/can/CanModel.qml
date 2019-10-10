@@ -59,6 +59,14 @@ QtObject {
     //        low frequency basis, direct slot to "signalValueUpdate" / "messageDataUpdate"
     //        can be implemented.
 
+
+    function initCanProcessing( devname, bitrate ){
+        //change based on available buses
+
+        CanController.canInit( devname, bitrate )
+        CanController.initCanRx( devname )
+    }
+
     signal signalValueUpdate(  string signalName, int value )
 
     // data corresponds to 64 bit value
@@ -104,19 +112,19 @@ QtObject {
             var frameType = frame["frameType"]
             var payload = new Int8Array(frame[ "payload" ])
 
+            //unable to propagate directly as Int8Array object
+            var payload2 = [ payload[0], payload[1], payload[2], payload[3] ]
+
             canNotification.canBus = devName
             canNotification.canId = msgId
-            canNotification.payload = payload
+            canNotification.payload = payload2
 
-
-            console.warn( "CAN frame id " + msgId )
 
             //send via notification manager
             canNotification.show()
 
 
             //send via signal / slot mechanism
-            //emit( messageDataUpdate( devName, msgId, payload ) )
             root.messageDataUpdate( devName, msgId, payload )
 
         }
@@ -153,9 +161,6 @@ QtObject {
       }
 
     Component.onCompleted: {
-
-        CanController.canInit( "vcan0", 115200 )
-        CanController.initCanRx( "vcan0" )
 
     }
 
