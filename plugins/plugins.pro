@@ -5,4 +5,5 @@ SUBDIRS = datasource \
           comtqci18ndemo \
           styles \
           translation \
-          systeminfo
+          systeminfo \
+          cancontroller
