@@ -17,8 +17,16 @@
 
                     "19": {"name": "Battery Voltage", "bit_length": 5}
 
-                   }
-
+                   },
+       "signals": { "0": {"name": "Hill Descent Control", "bit_length": 1, "factor": 1, "offset": 0},
+                    "1": {"name": "Intelligent Speed Adaptation", "bit_length": 1, "factor": 1, "offset": 1},
+                    "2": {"name": "Automatic Beam Switching", "bit_length": 1, "factor": 1, "offset": 2},
+                    "3": {"name": "Collision Avoidance", "bit_length": 1, "factor": 1, "offset": 3},
+                    "4": {"name": "Lane Assist", "bit_length": 1, "factor": 1, "offset": 4},
+                    "5": {"name": "Traffic Jam Assist", "bit_length": 1, "factor": 1, "offset": 5},
+                    "6": {"name": "Driver Drowsiness Alert", "bit_length": 1, "factor": 1, "offset": 6},
+                    "7": {"name": "Park Assist", "bit_length": 1, "factor": 1, "offset": 7}
+                  }
         }
 
     ]

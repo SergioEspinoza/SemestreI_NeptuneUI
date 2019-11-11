@@ -104,6 +104,14 @@ signals:
 private slots:
 
     /*!
+     * \brief devSignalChanged
+     *
+     *
+     */
+    void devSignalChanged(QCanBusFrame frame);
+
+
+    /*!
      * \brief devFramesReceived
      * slot for QCanBusDevice::framesReceived
      * frames received on active CanBusDevice

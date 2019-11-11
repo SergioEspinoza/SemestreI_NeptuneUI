@@ -137,7 +137,14 @@ QtObject {
         */
         onRxSignalValueChanged: {
             //TODO: implement!
+            var name = signalName
+            var val = value
 
+            canNotification.signalName = name
+
+            canNotification.show()
+
+//            root.
         }
 
     }

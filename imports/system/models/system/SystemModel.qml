@@ -32,6 +32,10 @@
 pragma Singleton
 import QtQuick 2.0
 
+import models.can 1.0
+import QtApplicationManager 1.0
+
+
 QtObject {
     id: root
 
@@ -42,5 +46,66 @@ QtObject {
     property int currentPageIndex: 2
     property int pageCount: 5
     property bool notificationCenterVisible: false
-}
 
+    //update on direct CanModel signal
+//    property Connections canModelConnections : Connections
+//    {
+//        target: CanModel
+
+        //messageDataUpdate( string bus, int msgId, int data
+//        onMessageDataUpdate: {
+
+//            root.notificationCenterVisible = true
+
+//            console.warn( "mesage arrived through signal" )
+
+//            console.warn( "bus : " + bus )
+//            console.warn( "msgId : " + msgId )
+
+//            console.warn( "data0 " + data[0].toString(16) )
+//            console.warn( "data1 " + data[1].toString(16) )
+//            console.warn( "data2 " + data[2].toString(16) )
+//            console.warn( "data3 " + data[3].toString(16) )
+
+//        }
+//    }
+
+
+    //update on Notification Manager notificationCenterVisible:
+
+    readonly property Connections notificationManagerConnection: Connections {
+        target: NotificationManager
+
+        onNotificationAdded: {
+            var receivedContent = NotificationManager.notification(id);
+            var body = receivedContent.extended
+
+            var payloadData
+
+            if (receivedContent.category === "can") {
+
+
+                console.warn("::: Can message received :::", id);
+
+                payloadData = body["payload"]
+
+                console.warn( " bus : " + body[ "canBus" ] )
+                console.warn( "message ID " + body[ "canId" ] )
+
+
+                console.warn( " can payload [0] " + payloadData[0].toString(16) )
+                console.warn( " can payload [1] " + payloadData[1].toString(16) )
+                console.warn( " can payload [2] " + payloadData[2].toString(16) )
+                console.warn( " can payload [3] " + payloadData[3].toString(16) )
+
+            }
+        }
+    }
+
+
+    Component.onCompleted: {
+
+        CanModel.initCanProcessing( "vcan0", 115200 )
+    }
+
+}

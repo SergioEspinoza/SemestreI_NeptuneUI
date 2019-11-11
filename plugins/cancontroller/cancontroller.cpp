@@ -89,6 +89,51 @@ int CanController::canInit( QString devName, int bitrate )
 }
 
 
+void CanController::devSignalChanged(QCanBusFrame frame)
+{
+    QByteArray payload = frame.payload();
+    QString signalNames[] = {   "Hill Descent Control", "Intelligent Speed Adaptation",
+                                "Automatic Beam Switching", "Collision Avoidance",
+                                "Lane Assist", "Traffic Jam Assist",
+                                "Driver Drowsiness Alert", "Park Assist"};
+
+    // Definition of signal using a Byte.
+    if( ( (frame.payload()[0] )&0x08) == 0x08){       // 4th bit shows a signal is activated.
+        // Selection of signal
+        if( ( (payload[0] )&0x04) == 0x04){
+            if( ( (payload[0] )&0x02) == 0x02){
+                if( ( (payload[0] )&0x01) == 0x01){
+                    emit rxSignalValueChanged(signalNames[7], 1);
+                } else {
+                    emit rxSignalValueChanged(signalNames[6], 1);
+                }
+            } else {
+                if( ( (payload[0] )&0x01) == 1){
+                    emit rxSignalValueChanged(signalNames[5], 1);
+                } else{
+                    emit rxSignalValueChanged(signalNames[4], 1);
+                }
+            }
+        }else {
+            if( ( (payload[0] )&0x02) == 0x02){
+                if( ( (payload[0] )&0x01) == 0x01){
+                    emit rxSignalValueChanged(signalNames[3], 1);
+                } else {
+                    emit rxSignalValueChanged(signalNames[2], 1);
+                }
+            } else {
+                if( ( (payload[0] )&0x01) == 1){
+                    emit rxSignalValueChanged(signalNames[1], 1);
+                } else{
+                    emit rxSignalValueChanged(signalNames[0], 1);
+                }
+            }
+
+        }
+    }
+}
+
+
 void CanController::devFramesReceived( void )
 {
     QMap<QString, QCanBusDevice* >::iterator i;
@@ -137,6 +182,7 @@ void CanController::devFramesReceived( void )
 
 
                             emit rxMessageDataChanged( i.key(), mapFrame );
+                            devSignalChanged(frame);
                         }
                     }
                 }
@@ -156,7 +202,7 @@ void CanController::devFramesReceived( void )
 
 
                     emit rxMessageDataChanged( i.key(), mapFrame );
-
+                    devSignalChanged(frame);
                 }
 
             }
