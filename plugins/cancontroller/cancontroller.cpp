@@ -103,29 +103,29 @@ void CanController::devSignalChanged(QCanBusFrame frame)
         if( ( (payload[0] )&0x04) == 0x04){
             if( ( (payload[0] )&0x02) == 0x02){
                 if( ( (payload[0] )&0x01) == 0x01){
-                    emit rxSignalValueChanged(signalNames[7], 1);
+                    emit rxSignalValueChanged(signalNames[7], payload.toUInt());
                 } else {
-                    emit rxSignalValueChanged(signalNames[6], 1);
+                    emit rxSignalValueChanged(signalNames[6], payload.toUInt());
                 }
             } else {
                 if( ( (payload[0] )&0x01) == 1){
-                    emit rxSignalValueChanged(signalNames[5], 1);
+                    emit rxSignalValueChanged(signalNames[5], payload.toUInt());
                 } else{
-                    emit rxSignalValueChanged(signalNames[4], 1);
+                    emit rxSignalValueChanged(signalNames[4], payload.toUInt());
                 }
             }
         }else {
             if( ( (payload[0] )&0x02) == 0x02){
                 if( ( (payload[0] )&0x01) == 0x01){
-                    emit rxSignalValueChanged(signalNames[3], 1);
+                    emit rxSignalValueChanged(signalNames[3], payload.toUInt());
                 } else {
-                    emit rxSignalValueChanged(signalNames[2], 1);
+                    emit rxSignalValueChanged(signalNames[2], payload.toUInt());
                 }
             } else {
                 if( ( (payload[0] )&0x01) == 1){
-                    emit rxSignalValueChanged(signalNames[1], 1);
+                    emit rxSignalValueChanged(signalNames[1], payload.toUInt());
                 } else{
-                    emit rxSignalValueChanged(signalNames[0], 1);
+                    emit rxSignalValueChanged(signalNames[0], payload.toUInt());
                 }
             }
 
@@ -181,8 +181,8 @@ void CanController::devFramesReceived( void )
                             //mapFrame.insert( "error", frame.error() );
 
 
-                            emit rxMessageDataChanged( i.key(), mapFrame );
                             devSignalChanged(frame);
+                            emit rxMessageDataChanged( i.key(), mapFrame );
                         }
                     }
                 }
@@ -201,8 +201,8 @@ void CanController::devFramesReceived( void )
                     //mapFrame.insert( "error", frame.error() );
 
 
-                    emit rxMessageDataChanged( i.key(), mapFrame );
                     devSignalChanged(frame);
+                    emit rxMessageDataChanged( i.key(), mapFrame );
                 }
 
             }

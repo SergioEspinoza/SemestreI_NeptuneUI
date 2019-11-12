@@ -82,7 +82,7 @@ QtObject {
 
             var payloadData
 
-            if (receivedContent.category === "can") {
+            if (receivedContent.category === "can" && body["signalName"] === "unset") {
 
 
                 console.warn("::: Can message received :::", id);
@@ -98,6 +98,13 @@ QtObject {
                 console.warn( " can payload [2] " + payloadData[2].toString(16) )
                 console.warn( " can payload [3] " + payloadData[3].toString(16) )
 
+            } else {
+                console.warn("::: Can signal changed :::");
+
+                payloadData = body["payload"]
+
+                console.warn( " signal : " + body[ "signalName" ]  )
+                console.warn( " signal value : " +  payloadData[0].toString(16));
             }
         }
     }

@@ -141,14 +141,14 @@ QtObject {
             var val = value
 
             canNotification.signalName = name
+            canNotification.payload[0] = val
 
             canNotification.show()
 
-//            root.
+            root.signalValueUpdate(name, val)
         }
 
     }
-
 
 
   property Connections notifyConnections : Connections {
