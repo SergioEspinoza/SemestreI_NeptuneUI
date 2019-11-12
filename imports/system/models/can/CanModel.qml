@@ -138,7 +138,7 @@ QtObject {
         onRxSignalValueChanged: {
             //TODO: implement!
             var name = signalName
-            var val = value
+            var val = [value]
 
             canNotification.signalName = name
             canNotification.payload[0] = val

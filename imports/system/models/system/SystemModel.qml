@@ -104,7 +104,7 @@ QtObject {
                 payloadData = body["payload"]
 
                 console.warn( " signal : " + body[ "signalName" ]  )
-                console.warn( " signal value : " +  payloadData[0].toString(16));
+                console.warn( " signal value : " +  payloadData);
             }
         }
     }

@@ -103,29 +103,29 @@ void CanController::devSignalChanged(QCanBusFrame frame)
         if( ( (payload[0] )&0x04) == 0x04){
             if( ( (payload[0] )&0x02) == 0x02){
                 if( ( (payload[0] )&0x01) == 0x01){
-                    emit rxSignalValueChanged(signalNames[7], payload.toUInt());
+                    emit rxSignalValueChanged(signalNames[7], payload[0]);
                 } else {
-                    emit rxSignalValueChanged(signalNames[6], payload.toUInt());
+                    emit rxSignalValueChanged(signalNames[6], payload[0]);
                 }
             } else {
                 if( ( (payload[0] )&0x01) == 1){
-                    emit rxSignalValueChanged(signalNames[5], payload.toUInt());
+                    emit rxSignalValueChanged(signalNames[5], payload[0]);
                 } else{
-                    emit rxSignalValueChanged(signalNames[4], payload.toUInt());
+                    emit rxSignalValueChanged(signalNames[4], payload[0]);
                 }
             }
         }else {
             if( ( (payload[0] )&0x02) == 0x02){
                 if( ( (payload[0] )&0x01) == 0x01){
-                    emit rxSignalValueChanged(signalNames[3], payload.toUInt());
+                    emit rxSignalValueChanged(signalNames[3], payload[0]);
                 } else {
-                    emit rxSignalValueChanged(signalNames[2], payload.toUInt());
+                    emit rxSignalValueChanged(signalNames[2], payload[0]);
                 }
             } else {
                 if( ( (payload[0] )&0x01) == 1){
-                    emit rxSignalValueChanged(signalNames[1], payload.toUInt());
+                    emit rxSignalValueChanged(signalNames[1], payload[0]);
                 } else{
-                    emit rxSignalValueChanged(signalNames[0], payload.toUInt());
+                    emit rxSignalValueChanged(signalNames[0], payload[0]);
                 }
             }
 
