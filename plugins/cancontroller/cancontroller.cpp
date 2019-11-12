@@ -92,10 +92,10 @@ int CanController::canInit( QString devName, int bitrate )
 void CanController::devSignalChanged(QCanBusFrame frame)
 {
     QByteArray payload = frame.payload();
-    QString signalNames[] = {   "Hill Descent Control", "Intelligent Speed Adaptation",
-                                "Automatic Beam Switching", "Collision Avoidance",
-                                "Lane Assist", "Traffic Jam Assist",
-                                "Driver Drowsiness Alert", "Park Assist"};
+    QString signalNames[] = {   "hill_descent_control_id", "intelligent_speed_adaptation_id",
+                                "automatic_beam_switching_id", "collision_avoidance_id",
+                                "lane_assist_id", "traffic_jam_assist_id",
+                                "driver_drowsiness_alert_id", "park_assist_id"};
 
     // Definition of signal using a Byte.
     if( ( (frame.payload()[0] )&0x08) == 0x08){       // 4th bit shows a signal is activated.
@@ -103,29 +103,61 @@ void CanController::devSignalChanged(QCanBusFrame frame)
         if( ( (payload[0] )&0x04) == 0x04){
             if( ( (payload[0] )&0x02) == 0x02){
                 if( ( (payload[0] )&0x01) == 0x01){
-                    emit rxSignalValueChanged(signalNames[7], payload[0]);
+                    emit rxSignalValueChanged(signalNames[7], 15);
                 } else {
-                    emit rxSignalValueChanged(signalNames[6], payload[0]);
+                    emit rxSignalValueChanged(signalNames[6], 14);
                 }
             } else {
                 if( ( (payload[0] )&0x01) == 1){
-                    emit rxSignalValueChanged(signalNames[5], payload[0]);
+                    emit rxSignalValueChanged(signalNames[5], 13);
                 } else{
-                    emit rxSignalValueChanged(signalNames[4], payload[0]);
+                    emit rxSignalValueChanged(signalNames[4], 12);
                 }
             }
         }else {
             if( ( (payload[0] )&0x02) == 0x02){
                 if( ( (payload[0] )&0x01) == 0x01){
-                    emit rxSignalValueChanged(signalNames[3], payload[0]);
+                    emit rxSignalValueChanged(signalNames[3], 11);
                 } else {
-                    emit rxSignalValueChanged(signalNames[2], payload[0]);
+                    emit rxSignalValueChanged(signalNames[2], 10);
                 }
             } else {
                 if( ( (payload[0] )&0x01) == 1){
-                    emit rxSignalValueChanged(signalNames[1], payload[0]);
+                    emit rxSignalValueChanged(signalNames[1], 9);
                 } else{
-                    emit rxSignalValueChanged(signalNames[0], payload[0]);
+                    emit rxSignalValueChanged(signalNames[0], 8);
+                }
+            }
+
+        }
+    } else {
+        // Selection of signal
+        if( ( (payload[0] )&0x04) == 0x04){
+            if( ( (payload[0] )&0x02) == 0x02){
+                if( ( (payload[0] )&0x01) == 0x01){
+                    emit rxSignalValueChanged(signalNames[7], 7);
+                } else {
+                    emit rxSignalValueChanged(signalNames[6], 6);
+                }
+            } else {
+                if( ( (payload[0] )&0x01) == 1){
+                    emit rxSignalValueChanged(signalNames[5], 5);
+                } else{
+                    emit rxSignalValueChanged(signalNames[4], 4);
+                }
+            }
+        }else {
+            if( ( (payload[0] )&0x02) == 0x02){
+                if( ( (payload[0] )&0x01) == 0x01){
+                    emit rxSignalValueChanged(signalNames[3], 3);
+                } else {
+                    emit rxSignalValueChanged(signalNames[2], 2);
+                }
+            } else {
+                if( ( (payload[0] )&0x01) == 1){
+                    emit rxSignalValueChanged(signalNames[1], 1);
+                } else{
+                    emit rxSignalValueChanged(signalNames[0], 0);
                 }
             }
 

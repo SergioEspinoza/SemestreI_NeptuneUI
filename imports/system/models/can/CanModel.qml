@@ -40,6 +40,14 @@ import service.can 1.0
 import utils 1.0
 
 
+import QtQuick.Layouts 1.0
+
+import controls 1.0
+import models.settings 1.0
+import service.popup 1.0
+import service.notification 1.0
+
+
 
 QtObject {
     id: root
@@ -95,7 +103,6 @@ QtObject {
     }
 
     property Connections canConnections : Connections {
-
         target: CanController
 
         // \brief OnRxMessageDataChanged
@@ -138,14 +145,24 @@ QtObject {
         onRxSignalValueChanged: {
             //TODO: implement!
             var name = signalName
-            var val = [value]
+            var signalValueArr = [value, value, value, value]
+            var signalValue = value
 
             canNotification.signalName = name
-            canNotification.payload[0] = val
-
+            canNotification.payload[0] = signalValue
             canNotification.show()
 
-            root.signalValueUpdate(name, val)
+            root.signalValueUpdate(name, signalValue)
+
+            if (value > 7) {
+                SettingsModel.functions.setProperty(signalValue - 8, "active", true)
+                canNotification.body = name + " activated"
+                canNotification.show()
+            } else {
+                SettingsModel.functions.setProperty(signalValue, "active", false)
+                canNotification.body = name + " deactivated"
+                canNotification.show()
+            }
         }
 
     }
