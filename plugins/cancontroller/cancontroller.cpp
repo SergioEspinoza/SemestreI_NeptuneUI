@@ -11,9 +11,8 @@
 #include <QJsonArray>
 #include <QDebug>
 
-
-
 #include "cancontroller.h"
+#include <jsonsignal.h>
 
 
 
@@ -98,7 +97,7 @@ void CanController::devSignalChanged(QCanBusFrame frame)
                                 "driver_drowsiness_alert_id", "park_assist_id"};
 
     // Definition of signal using a Byte.
-    if( ( (frame.payload()[0] )&0x08) == 0x08){       // 4th bit shows a signal is activated.
+    if( ( (frame.payload()[0] )&0x08) == 0x08){     // 4th bit shows a signal is activated.
         // Selection of signal
         if( ( (payload[0] )&0x04) == 0x04){
             if( ( (payload[0] )&0x02) == 0x02){
@@ -130,7 +129,7 @@ void CanController::devSignalChanged(QCanBusFrame frame)
             }
 
         }
-    } else {
+    } else {                                    // 4th bit shows a signal is deactivated.
         // Selection of signal
         if( ( (payload[0] )&0x04) == 0x04){
             if( ( (payload[0] )&0x02) == 0x02){
@@ -272,6 +271,7 @@ int CanController::readCanConfigFile( QString devName, QString filename )
 
     if( jsonFile.open(QIODevice::ReadOnly ) )
     {
+        // Should this warning be here???
         qWarning() << "Unable to open filter definition file";
 
         fileData = jsonFile.readAll();
@@ -348,17 +348,42 @@ int CanController::parseJsonMsgObj ( QString devName, QJsonObject obj )
 
     for( int i = 0 ; i < jArr.size() ; i++ )
     {
-        if( obj.contains( "id" ) )
+        QJsonObject jObj = jArr[i].toObject();
+        quint32 id;
+        QString name;
+        QJsonObject jSignalObj;
+        if( jObj.contains("id") )
         {
-             tmpFilter.frameId = (quint32)obj[ "id" ].toInt();
-             //only listen to specific id
-             tmpFilter.frameIdMask = 0x3FF;
-             tmpFilter.type = QCanBusFrame::DataFrame;
+            bool ok;
+            QString idStr= jObj.value("id").toString();
+            id = (quint32)idStr.toInt(&ok, 16);
+            tmpFilter.frameId = id;
+            //only listen to specific id
+            tmpFilter.frameIdMask = 0x3FF;
+            tmpFilter.type = QCanBusFrame::DataFrame;
 
-             filters.append( tmpFilter );
+            filters.append( tmpFilter );
 
-             //at least one message configured
-             ret = CANCONTROLLER_SUCESS;
+            //at least one message configured
+            ret = CANCONTROLLER_SUCESS;
+
+            if(jObj.contains("name")){
+                name = jObj.value("name").toString();
+            } else {
+                qDebug() << "message with id " << idStr << " has no name";
+            }
+            if(jObj.contains("signals")){
+                jSignalObj = jObj["signals"].toObject();
+                QJsonObject::iterator j;
+                for(j = jSignalObj.begin(); j != jSignalObj.end(); ++j){
+                    QJsonObject jSign = j.value().toObject();
+                    qint32 jSignId = j.key().toInt();
+                    //Signal created
+                    JsonSignal tempSignal(jSign, jSignId);
+                }
+            } else {
+                qDebug() << "no signals associated to message with id " << idStr;
+            }
 
         }
         else
@@ -366,7 +391,6 @@ int CanController::parseJsonMsgObj ( QString devName, QJsonObject obj )
             //not possible to parse message
             qDebug( ) << "cannot parse message";
         }
-
     }
 
     //TODO: below statement should store into

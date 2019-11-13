@@ -39,14 +39,7 @@ import service.can 1.0
 
 import utils 1.0
 
-
-import QtQuick.Layouts 1.0
-
-import controls 1.0
 import models.settings 1.0
-import service.popup 1.0
-import service.notification 1.0
-
 
 
 QtObject {
@@ -70,9 +63,10 @@ QtObject {
 
     function initCanProcessing( devname, bitrate ){
         //change based on available buses
-
+        var fName = "/home/raulceron/QtApps/CanInNeptune/plugins/cancontroller/ccan_database_example.json"
         CanController.canInit( devname, bitrate )
         CanController.initCanRx( devname )
+        CanController.readCanConfigFile(devname, fName)
     }
 
     signal signalValueUpdate(  string signalName, int value )
@@ -145,11 +139,11 @@ QtObject {
         onRxSignalValueChanged: {
             //TODO: implement!
             var name = signalName
-            var signalValueArr = [value, value, value, value]
+            var signalValueArr = [value[0], value[1], value[2], value[3]]
             var signalValue = value
 
             canNotification.signalName = name
-            canNotification.payload[0] = signalValue
+            canNotification.payload = signalValueArr
             canNotification.show()
 
             root.signalValueUpdate(name, signalValue)
