@@ -7,12 +7,14 @@ uri = com.yazaki.CanController
 load(qmlplugin)
 
 SOURCES += \
+    jsonmessage.cpp \
     jsonsignal.cpp \
     plugin.cpp \
     cancontroller.cpp \
 
 HEADERS += \
     cancontroller.h \ \
+    jsonmessage.h \
     jsonsignal.h
 
 DISTFILES += \

@@ -31,3 +31,20 @@ JsonSignal::JsonSignal(QJsonObject obj, qint32 signId) {
     this->factor = sigFactor;
     this->offset = sigOffset;
 }
+
+JsonSignal& JsonSignal::operator=(const JsonSignal &s2) {
+    this->name = s2.name;
+    this->id = s2.id;
+    this->bitLength = s2.bitLength;
+    this->factor = s2.factor;
+    this->offset = s2.offset;
+    return *this;
+}
+
+JsonSignal::JsonSignal(const JsonSignal &s2) {
+    name = s2.name;
+    id = s2.id;
+    bitLength = s2.bitLength;
+    factor = s2.factor; offset = s2.offset;
+}
+

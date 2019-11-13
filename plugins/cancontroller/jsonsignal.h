@@ -16,6 +16,8 @@ public:
     explicit JsonSignal(QObject *parent = nullptr);
 
     JsonSignal(QJsonObject, qint32);
+    JsonSignal(const JsonSignal &s2);
+    JsonSignal& operator=(const JsonSignal &);
 
     // Getters
     qint32 getId() { return id; }
@@ -36,21 +38,6 @@ signals:
 
 
 private slots:
-
-//    /*!
-//     * \brief devSignalChanged
-//     *
-//     *
-//     */
-//    void devSignalChanged(QCanBusFrame frame);
-
-
-//    /*!
-//     * \brief devFramesReceived
-//     * slot for QCanBusDevice::framesReceived
-//     * frames received on active CanBusDevice
-//     */
-//    void devFramesReceived( void );
 
 
 private:

@@ -12,9 +12,9 @@
 #include <QDebug>
 
 #include "cancontroller.h"
-#include <jsonsignal.h>
+#include "jsonmessage.h"
 
-
+static QVector<JsonMessage> messages;
 
 CanController::CanController(QObject *parent)
     : QObject(parent)
@@ -337,6 +337,7 @@ int CanController::parseJsonMsgObj ( QString devName, QJsonObject obj )
     int ret = CANCONTROLLER_ERROR;
     QList<QCanBusDevice::Filter> filters;
     QCanBusDevice::Filter tmpFilter;
+//    QVector<JsonMessage> messages;
 
     Q_ASSERT( devName != "" );
 
@@ -349,15 +350,12 @@ int CanController::parseJsonMsgObj ( QString devName, QJsonObject obj )
     for( int i = 0 ; i < jArr.size() ; i++ )
     {
         QJsonObject jObj = jArr[i].toObject();
-        quint32 id;
         QString name;
-        QJsonObject jSignalObj;
         if( jObj.contains("id") )
         {
-            bool ok;
-            QString idStr= jObj.value("id").toString();
-            id = (quint32)idStr.toInt(&ok, 16);
-            tmpFilter.frameId = id;
+            JsonMessage tempMessage(jObj);
+
+            tmpFilter.frameId = (quint32)tempMessage.getId();
             //only listen to specific id
             tmpFilter.frameIdMask = 0x3FF;
             tmpFilter.type = QCanBusFrame::DataFrame;
@@ -367,24 +365,7 @@ int CanController::parseJsonMsgObj ( QString devName, QJsonObject obj )
             //at least one message configured
             ret = CANCONTROLLER_SUCESS;
 
-            if(jObj.contains("name")){
-                name = jObj.value("name").toString();
-            } else {
-                qDebug() << "message with id " << idStr << " has no name";
-            }
-            if(jObj.contains("signals")){
-                jSignalObj = jObj["signals"].toObject();
-                QJsonObject::iterator j;
-                for(j = jSignalObj.begin(); j != jSignalObj.end(); ++j){
-                    QJsonObject jSign = j.value().toObject();
-                    qint32 jSignId = j.key().toInt();
-                    //Signal created
-                    JsonSignal tempSignal(jSign, jSignId);
-                }
-            } else {
-                qDebug() << "no signals associated to message with id " << idStr;
-            }
-
+            messages.append(tempMessage);
         }
         else
         {
