@@ -19,3 +19,6 @@ HEADERS += \
 
 DISTFILES += \
     ccan_database_example.json
+
+RESOURCES += \
+    jsondatabase.qrc

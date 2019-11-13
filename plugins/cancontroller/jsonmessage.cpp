@@ -12,7 +12,7 @@ JsonMessage::JsonMessage(QJsonObject obj) {
     this->id = (qint32)idStr.toInt(&ok, 16);
 
     if(obj.contains("name")){
-        name = obj.value("name").toString();
+        this->name = obj.value("name").toString();
     } else {
         qDebug() << "message with id " << this->id << " has no name";
     }

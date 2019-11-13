@@ -41,11 +41,11 @@ private slots:
 
 
 private:
-    qint32 id;
-    QString name;
-    qint32 bitLength;
-    qint32 factor;
-    qint32 offset;
+    qint32 id = -1;
+    QString name = "";
+    qint32 bitLength = -1;
+    qint32 factor = -1;
+    qint32 offset = -1;
 
 };
 

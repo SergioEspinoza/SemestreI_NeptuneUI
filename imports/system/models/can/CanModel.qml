@@ -63,7 +63,7 @@ QtObject {
 
     function initCanProcessing( devname, bitrate ){
         //change based on available buses
-        var fName = "/home/raulceron/QtApps/CanInNeptune/plugins/cancontroller/ccan_database_example.json"
+        var fName = "ccan_database_example.json"
         CanController.canInit( devname, bitrate )
         CanController.initCanRx( devname )
         CanController.readCanConfigFile(devname, fName)

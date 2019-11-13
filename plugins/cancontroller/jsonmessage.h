@@ -21,7 +21,7 @@ public:
 
     //Getters
     QString getName() { return name; }
-    quint32 getId() { return id; }
+    qint32 getId() { return id; }
     QVector<JsonSignal> getSignals() { return sgnls; }
 
 signals:
@@ -29,8 +29,8 @@ signals:
 public slots:
 
 private:
-    QString name;
-    quint32 id;
+    QString name = "";
+    qint32 id = -1;
     QVector<JsonSignal> sgnls;
 
 };

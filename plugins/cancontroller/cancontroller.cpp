@@ -266,7 +266,9 @@ int CanController::readCanConfigFile( QString devName, QString filename )
 {
     int ret = CANCONTROLLER_ERROR;
     QJsonParseError error;
-    QFile jsonFile( filename );
+
+    // Note: to use the ":/filename" notation, the file has to be added to the .qrc resources file.
+    QFile jsonFile( ":/" + filename );
     QByteArray fileData;
 
     if( jsonFile.open(QIODevice::ReadOnly ) )
@@ -337,6 +339,8 @@ int CanController::parseJsonMsgObj ( QString devName, QJsonObject obj )
     int ret = CANCONTROLLER_ERROR;
     QList<QCanBusDevice::Filter> filters;
     QCanBusDevice::Filter tmpFilter;
+
+//    // Temporal vector to visualize messages during Debug.
 //    QVector<JsonMessage> messages;
 
     Q_ASSERT( devName != "" );
