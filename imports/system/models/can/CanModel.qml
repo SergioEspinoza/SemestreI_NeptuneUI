@@ -64,9 +64,10 @@ QtObject {
     function initCanProcessing( devname, bitrate ){
         //change based on available buses
         var fName = "ccan_database_example.json"
+        // Parsing must happen before the canInit and initCanRx functions.
+        CanController.readCanConfigFile(devname, fName)
         CanController.canInit( devname, bitrate )
         CanController.initCanRx( devname )
-        CanController.readCanConfigFile(devname, fName)
     }
 
     signal signalValueUpdate(  string signalName, int value )
