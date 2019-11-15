@@ -18,6 +18,7 @@ HEADERS += \
     jsonsignal.h
 
 DISTFILES += \
+    amp_can_message_example.json \
     ccan_database_example.json
 
 RESOURCES += \

@@ -12,6 +12,7 @@
 #include <QMap>
 #include <QtSerialBus/QCanBus>
 #include <QtSerialBus/QCanBusDevice>
+#include <QtSerialPort/QSerialPort>
 
 
 #define CANCONTROLLER_SUCESS   0
@@ -31,11 +32,39 @@ public:
 
     /*!
      * \brief CanController::canInit
+     *     Initialize / open "socket can"
      * \param devName
      * \param bitrate
      * \return
      */
     Q_INVOKABLE int canInit( QString devName, int bitrate );
+
+
+    /*!
+     * \brief amp_canInit
+     *   Initialize Asymetric Multi Processing CAN reception (for
+     *   AMP systems)
+     *   This method will open andn configure
+     *    "AMP" channel (usually "/dev/ttyRPMSG" ).
+     *   For simulation purposes it should be possible to use
+     *   "$ socat -d -d pty,raw,echo=0 pty,raw,echo=0" and write
+     *   into one of the created virtual channels to emulate
+     *   traffic
+     *
+     * \param ttyName tty
+     * \return false: success
+     */
+    Q_INVOKABLE int amp_canInit( QString devName );
+
+
+    /*!
+     * \brief amp_canInitRx
+     *    Start listening on "AMP" channel.
+     *
+     * \return
+     */
+    Q_INVOKABLE int amp_canInitRx( void );
+
 
     /*!
      * \brief CanController::readCanConfigFile
@@ -131,8 +160,59 @@ private slots:
     void devErrorOccurred( QCanBusDevice::CanBusError error );
 
 
+    /*!
+     * \brief ampFramesRead
+     *    QIODevice::channelReadyRead() handler
+     *    Data available on channel
+     * \param channel
+     */
+    void  ampReadyRead( int channel );
+
+
 private:
 
+
+    /*!
+     * \brief ampDeserializeMsg
+     *  deserialize CAN message after reading
+     *  from JSON document
+     * expect json object (array) with following key / value structure:
+     *
+     *    "messages": [
+     *
+     *   {
+     *   //TODO: "name" field for future implementation
+     *   "name": "Chassis_Gear",
+     *
+     *   "id": "0x211",
+     *
+     *   "payload": "0x1225F43DE663237E",
+     *
+     *   //TODO: "signals" field for future implementation
+     *   "signals": [ { "name": "Engine RPM", "value": 25 },
+     *
+     *                { "name": "Gear", "value": 25 },
+     *
+     *                 { "name": "Battery Voltage", "value": 25} ]
+     *   }
+     *
+     *  ]
+     *
+     * \param obj
+     * \return CANCONTROLLER_SUCCESS /
+     *         CANCONTROLLER_ERROR
+     */
+    int ampDeserializeMsg( QJsonObject obj );
+
+
+    /*!
+     * \brief processIncomingCanMsg
+     *      verify if CAN message payload changed
+     *      and emit signal
+     * \param frame
+     * \param chanName
+     */
+    void processIncomingCanMsg( QString chanName, QCanBusFrame& frame );
 
 
     /*!
@@ -149,7 +229,7 @@ private:
 
 
     /*!
-     * \brief parseJsonMsgObj
+     * \brief parseJsonMsgConfigObj
      * read message parameters and set m_canFilters
      * and others applicable members
      * \param devName  channel nam
@@ -157,7 +237,7 @@ private:
      *
      * \return CANCONTROLLER_SUCCESS / FAIL
      */
-    int parseJsonMsgObj ( QString devName, QJsonObject obj );
+    int parseJsonMsgConfigObj ( QString devName, QJsonObject obj );
 
 
 
@@ -221,6 +301,13 @@ private:
       * TODO: implement for cyclic messages
       */
      QQueue< QCanBusFrame > m_txQueue;
+
+
+     /*!
+      * \brief amp_Channel asymmetric communication
+      *        channnel
+      */
+     QSerialPort* m_ampChannel;
 
 
 };
