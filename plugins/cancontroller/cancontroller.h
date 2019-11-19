@@ -99,7 +99,8 @@ public:
      * \param filters
      * \return
      */
-     Q_INVOKABLE int setFilters(QString devName, QList<QCanBusDevice::Filter> &filters );
+    // Not used as Q_INVOKABLE function
+     int setFilters(QString devName, QList<QCanBusDevice::Filter> &filters );
 
 
 signals:
@@ -166,7 +167,7 @@ private slots:
      *    Data available on channel
      * \param channel
      */
-    void  ampReadyRead( int channel );
+    void  ampReadyRead( void );
 
 
 private:

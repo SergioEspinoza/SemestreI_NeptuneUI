@@ -97,13 +97,12 @@ Q_INVOKABLE int CanController::amp_canInit( QString devName )
 
     if( serialPort->open( QSerialPort::ReadWrite )  )
     {
-        qWarning() << "unable to open serial channel";
+        m_ampChannel = serialPort;
+        ret = CANCONTROLLER_SUCESS;
     }
     else
     {
-
-        m_ampChannel = serialPort;
-        ret = CANCONTROLLER_SUCESS;
+        qWarning() << "unable to open serial channel";
     }
 
     return ret;
@@ -126,7 +125,7 @@ int CanController::amp_canInitRx( void )
     if( ( m_ampChannel != nullptr ) &&
             ( m_ampChannel->isOpen() ) )
     {
-        QObject::connect( m_ampChannel, &QSerialPort::channelReadyRead , this, &CanController::ampReadyRead );
+        QObject::connect( m_ampChannel, &QSerialPort::readyRead , this, &CanController::ampReadyRead );
 
     }
     else
@@ -319,10 +318,8 @@ void CanController::devErrorOccurred( QCanBusDevice::CanBusError error )
 }
 
 
-void  CanController::ampReadyRead( int channel )
+void  CanController::ampReadyRead( void )
 {
-    Q_UNUSED( channel )
-
     QByteArray readBuffer;
     QJsonParseError jsonerror;
     QJsonDocument jsonDoc;
@@ -334,7 +331,7 @@ void  CanController::ampReadyRead( int channel )
 
          jsonDoc = QJsonDocument::fromJson( readBuffer, &jsonerror );
 
-         if( jsonerror.error != QJsonParseError::NoError)
+         if( jsonerror.error == QJsonParseError::NoError)
          {
              if ( ampDeserializeMsg( jsonDoc.object() ) != CANCONTROLLER_SUCESS )
              {
@@ -447,8 +444,7 @@ int CanController::readCanConfigFile( QString devName, QString filename )
 }
 
 
-Q_INVOKABLE int CanController::initCanRx( QString devName )
-{
+int CanController::initCanRx( QString devName ){
     QCanBusDevice* canDev = nullptr;
     int ret = CANCONTROLLER_ERROR;
 

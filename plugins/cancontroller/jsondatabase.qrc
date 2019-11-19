@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>ccan_database_example.json</file>
+        <file>amp_can_message_example.json</file>
     </qresource>
 </RCC>
