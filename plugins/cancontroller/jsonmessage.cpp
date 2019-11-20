@@ -16,6 +16,21 @@ JsonMessage::JsonMessage(QJsonObject obj) {
     } else {
         qDebug() << "message with id " << this->id << " has no name";
     }
+    if(obj.contains("payload")){
+        QString temp = obj["payload"].toString();
+        if(temp.mid(0,2) == "0x") {
+            temp = temp.mid(2);
+        }
+        QByteArray utf = temp.toUtf8();
+        this->payload = QByteArray::fromHex( utf );
+    } else {
+        qDebug() << "message with id " << this->id << " has no payload";
+    }
+    if(obj.contains("dlc")){
+        this->dlc = obj.value("dlc").toString().toInt();
+    } else {
+        qDebug() << "message with id " << this->id << " has no dlc";
+    }
     if(obj.contains("signals")){
         jSignalObj = obj["signals"].toObject();
         QJsonObject::iterator j;

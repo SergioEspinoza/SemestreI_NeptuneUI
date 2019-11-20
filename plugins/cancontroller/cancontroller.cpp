@@ -41,7 +41,7 @@ int CanController::canInit( QString devName, int bitrate )
 
        if( errorMsg.isEmpty() )
        {
-           //TODO: check for devnName present in deviceList
+           //TODO: check for devName present in deviceList
            canBusDevice = m_canBus->createDevice( "socketcan", devName, &errorMsg );
 
            if( errorMsg.isEmpty() )
@@ -349,20 +349,14 @@ void  CanController::ampReadyRead( void )
 int CanController::ampDeserializeMsg( QJsonObject obj )
 {
     QString msgType;
-    QVariantMap msg;
-    QJsonArray::iterator iterator;
     QCanBusFrame frame;
     QJsonArray jArray;
-    QJsonObject curObj;
-    QByteArray payload;
     int ret = CANCONTROLLER_ERROR;
-
-
 
     msgType = obj[ "ampMsgType" ].toString();
 
     //asume only CAN messages for now
-    if(  ( msgType == "can") &&
+    if(  (msgType == "can") &&
             obj.contains( "messages" ) )
     {
 
@@ -374,14 +368,10 @@ int CanController::ampDeserializeMsg( QJsonObject obj )
 
             if( i->isObject() )
             {
-                curObj = i->toObject();
-
                 //TODO: check conversion
-                payload =  QByteArray::fromHex( curObj["payload"].toString().toUtf8() );
-
-                frame.setPayload( payload );
-                //frame
-                frame.setFrameId( (quint32) curObj["msgId"].toInt() );
+                JsonMessage tempMessage(i->toObject());
+                frame.setPayload( tempMessage.getPayload() );
+                frame.setFrameId( (quint32)tempMessage.getId() );
 
                 processIncomingCanMsg( "AMP", frame );
 

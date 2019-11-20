@@ -22,6 +22,8 @@ public:
     //Getters
     QString getName() { return name; }
     qint32 getId() { return id; }
+    qint32 getDlc() { return dlc; }
+    QByteArray getPayload() { return payload; }
     QVector<JsonSignal> getSignals() { return sgnls; }
 
 signals:
@@ -31,6 +33,8 @@ public slots:
 private:
     QString name = "";
     qint32 id = -1;
+    qint32 dlc = -1;
+    QByteArray payload;
     QVector<JsonSignal> sgnls;
 
 };
