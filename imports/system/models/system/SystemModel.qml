@@ -112,7 +112,11 @@ QtObject {
 
     Component.onCompleted: {
 
-        CanModel.initCanProcessing( "vcan0", 115200 )
+//        CanModel.initCanProcessing( "vcan0", 115200 )
+
+        // Select "AMP" channel (usually "/dev/ttyRPMSG" ).
+        CanModel.initCanProcessing("/dev/pts/5", 115200)
+
     }
 
 }

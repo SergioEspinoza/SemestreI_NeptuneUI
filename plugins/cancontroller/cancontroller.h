@@ -44,7 +44,7 @@ public:
      * \brief amp_canInit
      *   Initialize Asymetric Multi Processing CAN reception (for
      *   AMP systems)
-     *   This method will open andn configure
+     *   This method will open and configure
      *    "AMP" channel (usually "/dev/ttyRPMSG" ).
      *   For simulation purposes it should be possible to use
      *   "$ socat -d -d pty,raw,echo=0 pty,raw,echo=0" and write

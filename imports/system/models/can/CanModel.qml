@@ -66,8 +66,11 @@ QtObject {
         var fName = "ccan_database_example.json"
         // Parsing must happen before the canInit and initCanRx functions.
         CanController.readCanConfigFile(devname, fName)
-        CanController.canInit( devname, bitrate )
-        CanController.initCanRx( devname )
+//        CanController.canInit( devname, bitrate )
+//        CanController.initCanRx( devname )
+        CanController.amp_canInit(devname)
+        CanController.amp_canInitRx()
+
     }
 
     signal signalValueUpdate(  string signalName, int value )
@@ -140,11 +143,10 @@ QtObject {
         onRxSignalValueChanged: {
             //TODO: implement!
             var name = signalName
-            var signalValueArr = [value[0], value[1], value[2], value[3]]
             var signalValue = value
 
             canNotification.signalName = name
-            canNotification.payload = signalValueArr
+            canNotification.payload = signalValue
             canNotification.show()
 
             root.signalValueUpdate(name, signalValue)
