@@ -13,9 +13,7 @@
 #include <QtSerialPort/QSerialPort>
 
 #include "cancontroller.h"
-#include "jsonmessage.h"
 
-static QVector<JsonMessage> messages;
 
 CanController::CanController(QObject *parent)
     : QObject(parent)
@@ -492,7 +490,7 @@ int CanController::parseJsonMsgConfigObj ( QString devName, QJsonObject obj )
             //at least one message configured
             ret = CANCONTROLLER_SUCESS;
 
-            messages.append(tempMessage);
+            m_database.append(tempMessage);
         }
         else
         {

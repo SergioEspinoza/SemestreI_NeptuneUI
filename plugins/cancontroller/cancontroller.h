@@ -14,6 +14,7 @@
 #include <QtSerialBus/QCanBusDevice>
 #include <QtSerialPort/QSerialPort>
 
+#include "jsonmessage.h"
 
 #define CANCONTROLLER_SUCESS   0
 #define CANCONTROLLER_ERROR    -1
@@ -310,6 +311,11 @@ private:
       */
      QSerialPort* m_ampChannel;
 
+     /*!
+      * \brief m_database stores the messages from readCanConfigFile
+      *
+      */
+     QVector<JsonMessage> m_database;
 
 };
 

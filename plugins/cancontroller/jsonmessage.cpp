@@ -50,6 +50,8 @@ JsonMessage::JsonMessage(QJsonObject obj) {
 JsonMessage& JsonMessage::operator=(const JsonMessage &m2) {
     this->name = m2.name;
     this->id = m2.id;
+    this->dlc = m2.dlc;
+    this->payload = m2.payload;
     this->sgnls = m2.sgnls;
     return *this;
 }
@@ -57,6 +59,8 @@ JsonMessage& JsonMessage::operator=(const JsonMessage &m2) {
 JsonMessage::JsonMessage(const JsonMessage &m2):QObject() {
     this->name = m2.name;
     this->id = m2.id;
+    this->dlc = m2.dlc;
+    this->payload = m2.payload;
     this->sgnls = m2.sgnls;
 }
 
