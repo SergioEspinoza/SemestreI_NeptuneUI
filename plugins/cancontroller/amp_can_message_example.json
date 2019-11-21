@@ -1,0 +1,26 @@
+{
+
+    "ampMsgType": "can",
+
+    "messages": [
+
+        {
+
+        "name": "Chassis_Gear",
+
+        "id": "0x211",
+
+        "payload": "0x1225F43DE663237E",
+
+        "dlc" : "8",
+
+        "signals": [ { "name": "Engine RPM", "value": 25 },
+
+                      { "name": "Gear", "value": 25 },
+                      
+                      { "name": "Battery Voltage", "value": 25} ]
+        }
+
+    ]
+
+}

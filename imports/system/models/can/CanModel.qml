@@ -39,6 +39,7 @@ import service.can 1.0
 
 import utils 1.0
 
+import models.settings 1.0
 
 
 QtObject {
@@ -62,9 +63,14 @@ QtObject {
 
     function initCanProcessing( devname, bitrate ){
         //change based on available buses
+        var fName = "amp_can_message_example.json"
+        // Parsing must happen before the canInit and initCanRx functions.
+        CanController.readCanConfigFile(devname, fName)
+//        CanController.canInit( devname, bitrate )
+//        CanController.initCanRx( devname )
+        CanController.amp_canInit(devname)
+        CanController.amp_canInitRx()
 
-        CanController.canInit( devname, bitrate )
-        CanController.initCanRx( devname )
     }
 
     signal signalValueUpdate(  string signalName, int value )
@@ -95,7 +101,6 @@ QtObject {
     }
 
     property Connections canConnections : Connections {
-
         target: CanController
 
         // \brief OnRxMessageDataChanged
@@ -137,11 +142,27 @@ QtObject {
         */
         onRxSignalValueChanged: {
             //TODO: implement!
+            var name = signalName
+            var signalValue = value
 
+            canNotification.signalName = name
+            canNotification.payload = signalValue
+            canNotification.show()
+
+            root.signalValueUpdate(name, signalValue)
+
+            if (value > 7) {
+                SettingsModel.functions.setProperty(signalValue - 8, "active", true)
+                canNotification.body = name + " activated"
+                canNotification.show()
+            } else {
+                SettingsModel.functions.setProperty(signalValue, "active", false)
+                canNotification.body = name + " deactivated"
+                canNotification.show()
+            }
         }
 
     }
-
 
 
   property Connections notifyConnections : Connections {

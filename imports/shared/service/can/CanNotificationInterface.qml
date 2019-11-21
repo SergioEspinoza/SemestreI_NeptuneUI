@@ -135,6 +135,10 @@ Notification {
         updateData()
     }
 
+    onSignalNameChanged: {
+        updateData()
+    }
+
     //    onFrameTypeChanged: {
     //        updateDate()
     //    }

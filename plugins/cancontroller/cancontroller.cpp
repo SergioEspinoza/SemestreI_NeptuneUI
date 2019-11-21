@@ -10,11 +10,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDebug>
-
-
+#include <QtSerialPort/QSerialPort>
 
 #include "cancontroller.h"
-
 
 
 CanController::CanController(QObject *parent)
@@ -41,7 +39,7 @@ int CanController::canInit( QString devName, int bitrate )
 
        if( errorMsg.isEmpty() )
        {
-           //TODO: check for devnName present in deviceList
+           //TODO: check for devName present in deviceList
            canBusDevice = m_canBus->createDevice( "socketcan", devName, &errorMsg );
 
            if( errorMsg.isEmpty() )
@@ -88,16 +86,138 @@ int CanController::canInit( QString devName, int bitrate )
 
 }
 
+Q_INVOKABLE int CanController::amp_canInit( QString devName )
+{
+    int ret = CANCONTROLLER_ERROR;
+    QSerialPort* serialPort;
+
+    serialPort = new QSerialPort( devName );
+
+    if( serialPort->open( QSerialPort::ReadWrite )  )
+    {
+        m_ampChannel = serialPort;
+        ret = CANCONTROLLER_SUCESS;
+    }
+    else
+    {
+        qWarning() << "unable to open serial channel";
+    }
+
+    return ret;
+}
+
+
+int CanController::amp_canInitRx( void )
+{
+    int ret = CANCONTROLLER_ERROR;
+
+    // thos implementation asumes a dedicated channel for reading can
+    // input related messages.
+    // In case this apprach is not possible, message read should not be
+    // made here (through QSerialPort signal) but instead have a
+    // dedicated AMP message controller / router as a separate
+    // plugin component and have it route json object here
+    //
+
+
+    if( ( m_ampChannel != nullptr ) &&
+            ( m_ampChannel->isOpen() ) )
+    {
+        QObject::connect( m_ampChannel, &QSerialPort::readyRead , this, &CanController::ampReadyRead );
+
+    }
+    else
+    {
+        qWarning() << "amp channel not ready ";
+    }
+
+    return ret;
+}
+
+
+
+void CanController::devSignalChanged(QCanBusFrame frame)
+{
+    QByteArray payload = frame.payload();
+    QString signalNames[] = {   "hill_descent_control_id", "intelligent_speed_adaptation_id",
+                                "automatic_beam_switching_id", "collision_avoidance_id",
+                                "lane_assist_id", "traffic_jam_assist_id",
+                                "driver_drowsiness_alert_id", "park_assist_id"};
+
+    // Definition of signal using a Byte.
+    if( ( (frame.payload()[0] )&0x08) == 0x08){     // 4th bit shows a signal is activated.
+        // Selection of signal
+        if( ( (payload[0] )&0x04) == 0x04){
+            if( ( (payload[0] )&0x02) == 0x02){
+                if( ( (payload[0] )&0x01) == 0x01){
+                    emit rxSignalValueChanged(signalNames[7], 15);
+                } else {
+                    emit rxSignalValueChanged(signalNames[6], 14);
+                }
+            } else {
+                if( ( (payload[0] )&0x01) == 1){
+                    emit rxSignalValueChanged(signalNames[5], 13);
+                } else{
+                    emit rxSignalValueChanged(signalNames[4], 12);
+                }
+            }
+        }else {
+            if( ( (payload[0] )&0x02) == 0x02){
+                if( ( (payload[0] )&0x01) == 0x01){
+                    emit rxSignalValueChanged(signalNames[3], 11);
+                } else {
+                    emit rxSignalValueChanged(signalNames[2], 10);
+                }
+            } else {
+                if( ( (payload[0] )&0x01) == 1){
+                    emit rxSignalValueChanged(signalNames[1], 9);
+                } else{
+                    emit rxSignalValueChanged(signalNames[0], 8);
+                }
+            }
+
+        }
+    } else {                                    // 4th bit shows a signal is deactivated.
+        // Selection of signal
+        if( ( (payload[0] )&0x04) == 0x04){
+            if( ( (payload[0] )&0x02) == 0x02){
+                if( ( (payload[0] )&0x01) == 0x01){
+                    emit rxSignalValueChanged(signalNames[7], 7);
+                } else {
+                    emit rxSignalValueChanged(signalNames[6], 6);
+                }
+            } else {
+                if( ( (payload[0] )&0x01) == 1){
+                    emit rxSignalValueChanged(signalNames[5], 5);
+                } else{
+                    emit rxSignalValueChanged(signalNames[4], 4);
+                }
+            }
+        }else {
+            if( ( (payload[0] )&0x02) == 0x02){
+                if( ( (payload[0] )&0x01) == 0x01){
+                    emit rxSignalValueChanged(signalNames[3], 3);
+                } else {
+                    emit rxSignalValueChanged(signalNames[2], 2);
+                }
+            } else {
+                if( ( (payload[0] )&0x01) == 1){
+                    emit rxSignalValueChanged(signalNames[1], 1);
+                } else{
+                    emit rxSignalValueChanged(signalNames[0], 0);
+                }
+            }
+
+        }
+    }
+}
+
 
 void CanController::devFramesReceived( void )
 {
     QMap<QString, QCanBusDevice* >::iterator i;
     QCanBusDevice* canDev;
     QCanBusFrame frame;
-    QVariantMap mapFrame;
-    QList< QCanBusFrame >::iterator cacheIterator;
-    bool idMatch = false;
-
 
     // check for received frames on all buses
     for( i = m_canBusDevices.begin() ; i != m_canBusDevices.end() ; ++i  )
@@ -110,41 +230,36 @@ void CanController::devFramesReceived( void )
             //unqueue frame by frame
             frame = canDev->readFrame( );
 
+
+
             if( ( frame.isValid() ) && ( frame.error() == QCanBusFrame::NoError ) )
             {
+                processIncomingCanMsg( i.key(), frame );
+            }
+        }
 
-                idMatch = false;
-                //look for previous frame
-                for( cacheIterator =  m_messageCache[ i.key() ].begin() ;
-                     cacheIterator != m_messageCache[ i.key() ].end() ; ++cacheIterator )
+    }
+}
+
+
+void CanController::processIncomingCanMsg( QString chanName, QCanBusFrame& frame )
+{
+        QList< QCanBusFrame >::iterator cacheIterator;
+        QVariantMap mapFrame;
+        bool idMatch = false;
+
+        //look for previous frame
+        for( cacheIterator =  m_messageCache[ chanName ].begin() ;
+             cacheIterator != m_messageCache[ chanName ].end() ; ++cacheIterator )
+        {
+            if( cacheIterator->frameId() == frame.frameId() )
+            {
+                //msg found compare to last recorded value
+                idMatch = true;
+                if( cacheIterator->payload() != frame.payload()  )
                 {
-                    if( cacheIterator->frameId() == frame.frameId() )
-                    {
-                        //msg found compare to last recorded value
-                        idMatch = true;
-                        if( cacheIterator->payload() != frame.payload()  )
-                        {
-                            //update frame
-                            *cacheIterator = frame;
-
-                            mapFrame.insert( "frameId", frame.frameId() );
-                            mapFrame.insert( "frameType", frame.frameType() );
-                            mapFrame.insert( "payload", frame.payload() );
-
-                            //cannot map QFlags<FrameError> type
-                            // TODO: find another way
-                            //mapFrame.insert( "error", frame.error() );
-
-
-                            emit rxMessageDataChanged( i.key(), mapFrame );
-                        }
-                    }
-                }
-
-                //first time receive, add to cache, emit signal as well
-                if( !idMatch )
-                {
-                    m_messageCache[i.key()].append( frame );
+                    //update frame
+                    *cacheIterator = frame;
 
                     mapFrame.insert( "frameId", frame.frameId() );
                     mapFrame.insert( "frameType", frame.frameType() );
@@ -155,15 +270,31 @@ void CanController::devFramesReceived( void )
                     //mapFrame.insert( "error", frame.error() );
 
 
-                    emit rxMessageDataChanged( i.key(), mapFrame );
-
+                    devSignalChanged(frame);
+                    emit rxMessageDataChanged( chanName, mapFrame );
                 }
-
             }
         }
 
-    }
+        //first time receive, add to cache, emit signal as well
+        if( !idMatch )
+        {
+            m_messageCache[chanName].append( frame );
+
+            mapFrame.insert( "frameId", frame.frameId() );
+            mapFrame.insert( "frameType", frame.frameType() );
+            mapFrame.insert( "payload", frame.payload() );
+
+            //cannot map QFlags<FrameError> type
+            // TODO: find another way
+            //mapFrame.insert( "error", frame.error() );
+
+            devSignalChanged(frame);
+            emit rxMessageDataChanged( chanName, mapFrame );
+        }
 }
+
+
 
 
 void CanController::devFramesWritten( qint64 framesWritten )
@@ -177,11 +308,79 @@ void CanController::devErrorOccurred( QCanBusDevice::CanBusError error )
 {
 
     //TODO: translate error and log into file
-    qDebug() << "CAN bus error !! ";
+    qWarning() << "CAN bus error !! ";
 
 
-    qDebug() << error;
+    qWarning() << error;
 
+}
+
+
+void  CanController::ampReadyRead( void )
+{
+    QByteArray readBuffer;
+    QJsonParseError jsonerror;
+    QJsonDocument jsonDoc;
+
+    if( m_ampChannel->canReadLine( ) == true )
+    {
+        //json document should be 1 line
+         readBuffer = m_ampChannel->readLine( );
+
+         jsonDoc = QJsonDocument::fromJson( readBuffer, &jsonerror );
+
+         if( jsonerror.error == QJsonParseError::NoError)
+         {
+             if ( ampDeserializeMsg( jsonDoc.object() ) != CANCONTROLLER_SUCESS )
+             {
+                 qWarning() << "AMP can message parse error";
+             }
+
+         }
+         else
+         {
+             qWarning() << "AMP can message json format error";
+         }
+    }
+}
+
+int CanController::ampDeserializeMsg( QJsonObject obj )
+{
+    QString msgType;
+    QCanBusFrame frame;
+    QJsonArray jArray;
+    int ret = CANCONTROLLER_ERROR;
+
+    msgType = obj[ "ampMsgType" ].toString();
+
+    //asume only CAN messages for now
+    if(  (msgType == "can") &&
+            obj.contains( "messages" ) )
+    {
+
+
+        jArray = obj["messages"].toArray();
+
+        for( QJsonArray::iterator i = jArray.begin() ; i != jArray.end() ; i++ )
+        {
+
+            if( i->isObject() )
+            {
+                //TODO: check conversion
+                JsonMessage tempMessage(i->toObject());
+                frame.setPayload( tempMessage.getPayload() );
+                frame.setFrameId( (quint32)tempMessage.getId() );
+
+                processIncomingCanMsg( "AMP", frame );
+
+                ret = CANCONTROLLER_SUCESS;
+           }
+
+        }
+
+    }
+
+    return ret;
 }
 
 
@@ -189,11 +388,14 @@ int CanController::readCanConfigFile( QString devName, QString filename )
 {
     int ret = CANCONTROLLER_ERROR;
     QJsonParseError error;
-    QFile jsonFile( filename );
+
+    // Note: to use the ":/filename" notation, the file has to be added to the .qrc resources file.
+    QFile jsonFile( ":/" + filename );
     QByteArray fileData;
 
     if( jsonFile.open(QIODevice::ReadOnly ) )
     {
+        // Should this warning be here???
         qWarning() << "Unable to open filter definition file";
 
         fileData = jsonFile.readAll();
@@ -214,7 +416,7 @@ int CanController::readCanConfigFile( QString devName, QString filename )
 
             if( jObj.contains( "messages" ) )
             {
-                ret = parseJsonMsgObj( devName, jObj );
+                ret = parseJsonMsgConfigObj( devName, jObj );
             }
         }
 
@@ -230,8 +432,7 @@ int CanController::readCanConfigFile( QString devName, QString filename )
 }
 
 
-Q_INVOKABLE int CanController::initCanRx( QString devName )
-{
+int CanController::initCanRx( QString devName ){
     QCanBusDevice* canDev = nullptr;
     int ret = CANCONTROLLER_ERROR;
 
@@ -254,11 +455,14 @@ Q_INVOKABLE int CanController::initCanRx( QString devName )
     return  ret;
 }
 
-int CanController::parseJsonMsgObj ( QString devName, QJsonObject obj )
+int CanController::parseJsonMsgConfigObj ( QString devName, QJsonObject obj )
 {
     int ret = CANCONTROLLER_ERROR;
     QList<QCanBusDevice::Filter> filters;
     QCanBusDevice::Filter tmpFilter;
+
+//    // Temporal vector to visualize messages during Debug.
+//    QVector<JsonMessage> messages;
 
     Q_ASSERT( devName != "" );
 
@@ -270,25 +474,29 @@ int CanController::parseJsonMsgObj ( QString devName, QJsonObject obj )
 
     for( int i = 0 ; i < jArr.size() ; i++ )
     {
-        if( obj.contains( "id" ) )
+        QJsonObject jObj = jArr[i].toObject();
+        QString name;
+        if( jObj.contains("id") )
         {
-             tmpFilter.frameId = (quint32)obj[ "id" ].toInt();
-             //only listen to specific id
-             tmpFilter.frameIdMask = 0x3FF;
-             tmpFilter.type = QCanBusFrame::DataFrame;
+            JsonMessage tempMessage(jObj);
 
-             filters.append( tmpFilter );
+            tmpFilter.frameId = (quint32)tempMessage.getId();
+            //only listen to specific id
+            tmpFilter.frameIdMask = 0x3FF;
+            tmpFilter.type = QCanBusFrame::DataFrame;
 
-             //at least one message configured
-             ret = CANCONTROLLER_SUCESS;
+            filters.append( tmpFilter );
 
+            //at least one message configured
+            ret = CANCONTROLLER_SUCESS;
+
+            m_database.append(tempMessage);
         }
         else
         {
             //not possible to parse message
-            qDebug( ) << "cannot parse message";
+            qDebug( ) << "cannot parse database config mask";
         }
-
     }
 
     //TODO: below statement should store into

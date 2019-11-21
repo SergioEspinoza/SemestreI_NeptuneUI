@@ -16,8 +16,8 @@
         <translation>Automatic Beam Switching</translation>
     </message>
     <message id="collision_avoidance_id">
-        <source>Automatic Beam Switching</source>
-        <translation>Automatic Beam Switching</translation>
+        <source>Collision Avoidance</source>
+        <translation>Collision Avoidance</translation>
     </message>
     <message id="lane_assist_id">
         <source>Lane Assist</source>
