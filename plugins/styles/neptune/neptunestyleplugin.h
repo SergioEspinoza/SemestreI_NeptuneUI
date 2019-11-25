@@ -34,6 +34,7 @@
 
 #include <QtQuickControls2/private/qquickstyleplugin_p.h>
 #include <QLoggingCategory>
+#include <QtGui/qpa/qplatformtheme.h>
 
 QT_FORWARD_DECLARE_CLASS(QQmlEngine)
 Q_DECLARE_LOGGING_CATEGORY(neptuneStyle)
@@ -48,7 +49,7 @@ public:
     void registerTypes(const char *uri) override;
     void initializeEngine(QQmlEngine *engine, const char *uri) override;
     QString name() const override;
-    QQuickProxyTheme *createTheme() const override;
+    QPlatformTheme *createTheme() const ;
 
 };
 

@@ -33,16 +33,17 @@
 #define NEPTUNETHEME_H
 
 #include <QtGui/QFont>
-#include <QtQuickControls2/private/qquickproxytheme_p.h>
+//#include <QtQuickControls2/private/qquickproxytheme_p.h>
 #include <QLoggingCategory>
+#include <QtQuickControls2/private/qquickstyleplugin_p.h>
+#include <QtGui/qpa/qplatformtheme.h>
 
-
-class NeptuneTheme : public QQuickProxyTheme
+class NeptuneTheme : public QPlatformTheme
 {
 public:
     NeptuneTheme(QPlatformTheme *theme = nullptr);
 
-    const QFont *font(QPlatformTheme::Font type = SystemFont) const;
+    const QFont *font(QPlatformTheme::Font type = QPlatformTheme::Font::SystemFont) const;
 private:
     QFont m_systemFont;
 };

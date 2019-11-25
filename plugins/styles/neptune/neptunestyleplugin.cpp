@@ -57,7 +57,7 @@ QString NeptuneStylePlugin::name() const
     return QStringLiteral("neptune");
 }
 
-QQuickProxyTheme *NeptuneStylePlugin::createTheme() const
+QPlatformTheme *NeptuneStylePlugin::createTheme() const
 {
     qCDebug(neptuneStyle) << "Created a NeptuneTheme instance";
     return new NeptuneTheme;

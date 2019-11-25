@@ -57,10 +57,10 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     Package::ensureCorrectLocale();
 
     QString error;
-    if (Q_UNLIKELY(!forkSudoServer(DropPrivilegesPermanently, &error))) {
-        qCCritical(LogSystem) << "ERROR:" << qPrintable(error);
-        return 2;
-    }
+//    if (Q_UNLIKELY(!forkSudoServer(DropPrivilegesPermanently, &error))) {
+//        qCCritical(LogSystem) << "ERROR:" << qPrintable(error);
+//        return 2;
+//    }
 
     try {
         qputenv("QT_IM_MODULE", "qtvirtualkeyboard");
