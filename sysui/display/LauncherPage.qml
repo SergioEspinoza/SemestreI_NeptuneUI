@@ -88,7 +88,7 @@ UIPage {
                 anchors.fill: parent
                 anchors.margins: padding
                 name: model.name
-                icon: Qt.resolvedUrl(model.icon)
+                myicon: Qt.resolvedUrl(model.myicon)
 
                 editMode: view.editMode
                 removable: model.isRemovable

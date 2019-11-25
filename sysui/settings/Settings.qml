@@ -127,7 +127,7 @@ Page {
                     width: Style.hspan(20)
                     height: Style.vspan(2)
                     text: title
-                    icon: iconName
+                    myicon: iconName
                     onClicked: stackView.push(Qt.resolvedUrl(page))
                 }
             }
