@@ -31,7 +31,8 @@
 
 import QtQuick 2.6
 import QtQuick.Window 2.3
-import QtApplicationManager 1.0
+import QtApplicationManager 2.0
+import QtApplicationManager.SystemUI 2.0
 import com.pelagicore.ScreenManager 1.0
 import utils 1.0
 

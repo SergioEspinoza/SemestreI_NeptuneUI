@@ -37,8 +37,8 @@ import controls 1.0
 import utils 1.0
 
 import "JSONBackend.js" as JSONBackend
-import QtApplicationManager 1.0
-
+import QtApplicationManager 2.0
+import QtApplicationManager.SystemUI 2.0
 
 // TODO: extract operations into a library, leave UI here. Think about a better name then controller
 

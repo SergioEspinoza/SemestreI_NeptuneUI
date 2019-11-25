@@ -42,7 +42,7 @@ ItemDelegate {
     anchors.left: parent.left
     anchors.leftMargin: Style.hspan(2)
 
-    property alias icon: icon.name
+    property string myicon: icon.name
     property alias hasChildren: childIndicator.visible
 
     contentItem: Item {
@@ -52,7 +52,7 @@ ItemDelegate {
             height: parent.height
 
             Symbol {
-                id: icon
+                id: myicon
                 objectName: root.objectName + "Symbol"
                 Layout.preferredWidth: Style.hspan(1)
                 Layout.fillHeight: true
@@ -64,7 +64,7 @@ ItemDelegate {
                 id: placeHolder
                 width: Style.hspan(0.2)
                 height: parent.height
-                visible: !icon.visible
+                visible: !myicon.visible
             }
 
             Label {

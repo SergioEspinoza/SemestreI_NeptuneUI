@@ -57,13 +57,16 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     Package::ensureCorrectLocale();
 
     QString error;
-//    if (Q_UNLIKELY(!forkSudoServer(DropPrivilegesPermanently, &error))) {
-//        qCCritical(LogSystem) << "ERROR:" << qPrintable(error);
-//        return 2;
-//    }
+    /*if (Q_UNLIKELY(!forkSudoServer(DropPrivilegesPermanently, &error))) {
+        qCCritical(LogSystem) << "ERROR:" << qPrintable(error);
+        return 2;
+    }*/
 
     try {
         qputenv("QT_IM_MODULE", "qtvirtualkeyboard");
+        qputenv("QT_QPA_PLATFORM", "linuxfb");
+        qputenv("QML_IMPORT_PATH", "/usr/neptune-ui/imports/imports/shared /usr/neptune-ui/imports/imports/system /usr/neptune-ui/sysui");
+
         // this is needed for both WebEngine and Wayland Multi-screen rendering
         QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
 #if !defined(QT_NO_SESSIONMANAGER)
@@ -72,7 +75,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
         Main a(argc, argv);
 
-        DefaultConfiguration cfg(QStringList(qSL("am-config.yaml")), QString());
+        DefaultConfiguration cfg(QStringList(qSL("/usr/neptune-ui/am-config.yaml")), QString());
         cfg.parse();
         a.setup(&cfg);
         a.loadQml(cfg.loadDummyData());

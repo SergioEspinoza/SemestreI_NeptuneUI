@@ -31,7 +31,8 @@
 
 pragma Singleton
 import QtQuick 2.6
-import QtApplicationManager 1.0
+import QtApplicationManager 2.0
+import QtApplicationManager.SystemUI 2.0
 import com.pelagicore.datasource 1.0
 import QtIvi 1.0
 import QtIvi.Media 1.0

@@ -40,7 +40,7 @@ Button {
 
     property string name
     text: name
-    property url icon: icon.source
+    property url myicon: icon.source
     property bool editMode: false
     property bool removable: false
     property bool isUpdating: false
@@ -66,7 +66,7 @@ Button {
 
     indicator: Image {
         anchors.centerIn: parent
-        source: root.icon
+        source: root.myicon
     }
 
     ProgressBar {
@@ -74,7 +74,7 @@ Button {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         padding: 6
-        enabled: root.icon && (root.installProgress > 0.0 && root.installProgress < 1.0)
+        enabled: root.myicon && (root.installProgress > 0.0 && root.installProgress < 1.0)
         visible: enabled
         value: root.installProgress
     }

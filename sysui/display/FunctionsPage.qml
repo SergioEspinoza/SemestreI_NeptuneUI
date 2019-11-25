@@ -98,11 +98,11 @@ UIPage {
             width: GridView.view.cellWidth
             height: GridView.view.cellHeight
             text: qsTrId(model.description) + Style.translation.emptyString
-            icon: Style.symbolM(model.icon, model.active)
+            myicon: Style.symbolM(model.myicon, model.active)
             highlighted: model.active
 
             onClicked: {
-                popupInterface.functionIcon = icon
+                popupInterface.functionIcon = myicon
                 popupInterface.currentState = model.active
                 popupInterface.functionIndex = index
                 popupInterface.functionName = qsTrId(model.description) + Style.translation.emptyString

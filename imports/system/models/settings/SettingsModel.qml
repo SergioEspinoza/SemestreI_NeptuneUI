@@ -115,42 +115,42 @@ QtObject {
     property ListModel functions: ListModel {
         ListElement {
             description: "hill_descent_control_id"
-            icon: "hill_descent_control"
+            myicon: "hill_descent_control"
             active: true
         }
         ListElement {
             description: "intelligent_speed_adaptation_id"
-            icon: "intelligent_speed_adaptation"
+            myicon: "intelligent_speed_adaptation"
             active: false
         }
         ListElement {
             description: "automatic_beam_switching_id"
-            icon: "automatic_beam_switching"
+            myicon: "automatic_beam_switching"
             active: true
         }
         ListElement {
             description: "collision_avoidance_id"
-            icon: "collision_avoidance"
+            myicon: "collision_avoidance"
             active: false
         }
         ListElement {
             description: "lane_assist_id"
-            icon: "lane_keeping_assist"
+            myicon: "lane_keeping_assist"
             active: false
         }
         ListElement {
             description: "traffic_jam_assist_id"
-            icon: "traffic_jam_assist"
+            myicon: "traffic_jam_assist"
             active: false
         }
         ListElement {
             description: "driver_drowsiness_alert_id"
-            icon: "driver_drownsyness_alert"
+            myicon: "driver_drownsyness_alert"
             active: true
         }
         ListElement {
             description: "park_assist_id"
-            icon: "park_assist"
+            myicon: "park_assist"
             active: false
         }
     }

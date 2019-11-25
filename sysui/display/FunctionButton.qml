@@ -43,7 +43,7 @@ Button {
     height: Style.vspan(7)
     topPadding: root.height * .75
 
-    property url icon: icon.source
+    property url myicon: icon.source
 
     RectangularGlow {
         anchors.fill: highlightBar
@@ -74,6 +74,6 @@ Button {
     indicator: Image {
         objectName: "FunctionButton::Image_"+root.text
         anchors.centerIn: parent
-        source: root.icon
+        source: root.myicon
     }
 }

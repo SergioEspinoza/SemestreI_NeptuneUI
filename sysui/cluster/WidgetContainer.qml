@@ -31,7 +31,8 @@
 
 import QtQuick 2.0
 import utils 1.0
-import QtApplicationManager 1.0
+import QtApplicationManager 2.0
+import QtApplicationManager.SystemUI 2.0
 
 Item {
     id: root
