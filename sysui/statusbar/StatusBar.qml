@@ -79,8 +79,8 @@ Pane {
     }
 
     RowLayout {
-//        spacing: Style.paddingXL * 2 // 1920 x 1080
-        spacing: Style.paddingXL * 4 // 1280 x 800
+        spacing: Style.paddingXL * 2 // 1920 x 1080
+//        spacing: Style.paddingXL * 4 // 1280 x 800
         Layout.maximumWidth: Style.hspan(12)
         Layout.maximumHeight: Style.statusBarHeight
         anchors.right: parent.right
