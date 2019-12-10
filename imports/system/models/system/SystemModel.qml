@@ -115,7 +115,7 @@ QtObject {
 //        CanModel.initCanProcessing( "vcan0", 115200 )
 
         // Select "AMP" channel (usually "/dev/ttyRPMSG" ).
-        CanModel.initCanProcessing("/dev/tty0", 115200)
+        CanModel.initCanProcessing("/dev/ttyRPMSG0", 115200)
 
     }
 
